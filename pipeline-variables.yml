@@ -1,0 +1,75 @@
+variables:
+  containerPort: 80
+  hostPort: 7000
+
+  containerRegistryName: "azureacrdevelopment"
+  containerRegistryServiceConnection: "Azure-ACR-Development"
+  containerLogPath: '/app/Logs'
+  
+  # environment - artifacts - deployment
+  envFileDir: "env"
+  envArtifactName: "envArtifact"
+  deploymentEnvPath: "env/"
+  
+  #container
+  repositoryName: ${{ lower(variables['Build.DefinitionName'])  }}
+  imageVersion: $(Build.BuildNumber)
+  
+  #build
+  build_StageName: 'Build'
+  dockerfileBuildPath: "Dockerfile"
+  dockerfileContext: "."
+  dockerBuildTimeout: 10
+  dockerRestartPolicy: "unless-stopped"
+  
+  #all environment
+  all_DockerRunPortArgs: '-p $(hostPort):$(containerPort)'
+
+  # Development Stage
+  dev_StageName: "Dev"
+  dev_ContainerName: ${{ lower(format('{0}-{1}', variables.repositoryName, variables.dev_StageName)) }}
+  dev_DockerNetwork: "devnetwork"
+  
+  dev_EnvFile: "Development"
+  dev_HostLogPath: '/var/log/docker/$(dev_ContainerName)'
+  dev_DockerRunVolumesArgs: '-v $(dev_HostLogPath):$(containerLogPath)'
+  dev_DockerRunEnvArgs: '--env-file $(deploymentEnvPath)$(dev_EnvFile)'
+  
+  dev_DockerRunArgs: '$(dev_DockerRunEnvArgs) $(all_DockerRunPortArgs) $(dev_DockerRunVolumesArgs)'
+  
+  #Development Resources
+  dev_dgb_jpn_dev02_DeploymentName: "dgb_jpn_dev02" 
+  dev_dgb_jpn_dev02_EnvironmentResourceName: "Development_Azure_Devgambit.dgb-jpn-dev02"
+  
+  
+  # # Training Stage
+  # training_StageName: "Training"
+  # training_ContainerName: ${{ lower(format('{0}-{1}', variables.repositoryName, variables.training_StageName)) }}
+  # training_DockerNetwork: "devnetwork"
+  
+  # training_EnvFile: "Training"
+  # training_HostLogPath: '/var/log/docker/$(training_ContainerName)'
+  # training_DockerRunVolumesArgs: '-v $(training_HostLogPath):$(containerLogPath)'
+  # training_DockerRunEnvArgs: '--env-file $(deploymentEnvPath)$(training_EnvFile)'
+  
+  # training_DockerRunArgs: '$(training_DockerRunEnvArgs) $(training_DockerRunVolumesArgs)'
+  
+  # #Training Resources
+  # training_azure_devops_vm_DeploymentName: "training_azure_devops_vm"
+  # training_azure_devops_vm_EnvironmentResourceName: "Training_Test.training-azure-devops-vm"
+  
+  # # Training_Live Stage
+  # traininglive_StageName: "Training_Live"
+  # traininglive_ContainerName: ${{ lower(format('{0}-{1}', variables.repositoryName, variables.traininglive_StageName)) }}
+  # traininglive_DockerNetwork: "devnetwork"
+  
+  # traininglive_EnvFile: "Development"
+  # traininglive_HostLogPath: '/var/log/docker/$(traininglive_ContainerName)'
+  # traininglive_DockerRunVolumesArgs: '-v $(traininglive_HostLogPath):$(containerLogPath)'
+  # traininglive_DockerRunEnvArgs: '--env-file $(deploymentEnvPath)$(traininglive_EnvFile)'
+  
+  # traininglive_DockerRunArgs: '$(traininglive_DockerRunEnvArgs) $(traininglive_DockerRunVolumesArgs)'
+  
+  # #Training_Live Resources
+  # traininglive_azure_devops_vm_DeploymentName: "training_azure_devops_vm"
+  # traininglive_azure_devops_vm_EnvironmentResourceName: "Training_Test_Live.training-azure-devops-vm"

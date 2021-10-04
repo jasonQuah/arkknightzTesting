@@ -1,0 +1,49 @@
+  GNU nano 4.8                                        deployment.yaml                                                   apiVersion: v1
+kind: Namespace
+metadata:
+  name: arknightz
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: arknightz-testing-service
+  namespace: arknightz
+spec:
+  selector:
+    app: arknightz-testing
+  ports:
+    - port: 8835
+      targetPort: 80
+      protocol: "TCP"
+      nodePort: 30023
+  type: NodePort
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arknightz-testing
+  namespace: arknightz
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: arknightz-testing
+  template:
+    metadata:
+      labels:
+        app: arknightz-testing
+    spec:
+      containers:
+        - name: arknightz-testing
+          image: arknightz
+          ports:
+            - containerPort: 80

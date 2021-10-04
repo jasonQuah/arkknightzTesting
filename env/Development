@@ -1,0 +1,5 @@
+REACT_APP_CHOKIDAR_USEPOLLING=true
+REACT_APP_NAME=arknightzbackofficeui-development
+REACT_APP_ENV=development
+REACT_APP_BASE_URL=testbase
+REACT_APP_ZABBIX_URL=http://202.168.197.199

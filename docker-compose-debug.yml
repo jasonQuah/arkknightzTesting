@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  arknightzbackofficeui:
+    image: arknightzbackofficeui
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.debug
+      args: 
+        # - REACT_APP_NAME2=${REACT_APP_NAME2} => as a sample if want to use .env.dev 
+        - CHOKIDAR_USEPOLLING=true
+        - REACT_APP_NAME=arknightzbackofficeui-dev
+        - REACT_APP_NAME2=arknightzbackofficeui-dev2
+    ports: 
+      - "7200:7200"
+    volumes: 
+      - ./src:/app/src:ro
+    # env_file:
+    #   - ../env/Development

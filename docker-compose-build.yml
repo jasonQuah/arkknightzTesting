@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  arknightzbackofficeui:
+    image: arknightzbackofficeui
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    ports: 
+      - "7000:80"
+    environment: 
+      - REACT_APP_NAME=arknightzbackofficeui
+      - REACT_APP_ENV=development
+      - REACT_APP_BASE_URL=testbase
+    env_file:
+      - ./env/Development
+    volumes: 
+      - ./build/:/usr/share/nginx/html/static/test
+  

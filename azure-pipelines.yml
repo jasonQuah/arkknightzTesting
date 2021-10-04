@@ -1,0 +1,75 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+name: Arknightz.BackOffice.UI.$(Year:yy)$(Date:MMdd)$(Rev:rrrr)
+
+trigger:
+  branches:
+    include:
+    - main
+    - dev/*
+
+pool:
+  vmImage: ubuntu-latest
+resources: 
+  repositories: 
+  - repository: Templates
+    name: Default/Pipeline.Shared.Template
+    type: git 
+    ref: main
+    
+variables:
+  #variables
+  - template: pipeline-variables.yml
+  
+extends:
+  template: dockerfile-acr-environments-docker.yml@Templates
+  parameters:
+    containerRegistryServiceConnection: $(containerRegistryServiceConnection)
+    containerRegistryName: $(containerRegistryName)
+    
+    dockerfileBuildPath: $(dockerfileBuildPath)
+    dockerfileContext: $(dockerfileContext)
+    dockerRestartPolicy: $(dockerRestartPolicy)
+    dockerBuildTimeout: ${{ variables.dockerBuildTimeout }}
+    
+    envFileDir: $(envFileDir)
+    envArtifactName: $(envArtifactName)
+    
+    repositoryName: $(repositoryName)
+    imageVersion: $(imageVersion)
+    
+    buildStageName: ${{ variables.build_StageName }}
+    
+    deploymentEnvPath: $(deploymentEnvPath)
+    
+    deployments:
+    - stageName: ${{ variables.dev_StageName }}
+      stageDependsOn: ${{ variables.build_StageName }}
+      dockerNetwork: $(dev_DockerNetwork)
+      dockerRunArgs: $(dev_DockerRunArgs)
+      containerName: $(dev_ContainerName)
+      resources:
+      - deploymentName: ${{ variables.dev_dgb_jpn_dev02_DeploymentName }}
+        environmentResourceName: $(dev_dgb_jpn_dev02_EnvironmentResourceName)
+        
+    # - stageName: ${{ variables.training_StageName }}
+    #   stageDependsOn: ${{ variables.build_StageName }}
+    #   dockerNetwork: $(training_DockerNetwork)
+    #   dockerRunArgs: $(training_DockerRunArgs)
+    #   containerName: $(training_ContainerName)
+    #   resources:
+    #   - deploymentName: ${{ variables.training_azure_devops_vm_DeploymentName }}
+    #     environmentResourceName: $(training_azure_devops_vm_EnvironmentResourceName)
+        
+    # - stageName: ${{ variables.traininglive_StageName }}
+    #   stageDependsOn: ${{ variables.training_StageName }}
+    #   dockerNetwork: $(traininglive_DockerNetwork)
+    #   dockerRunArgs: $(traininglive_DockerRunArgs)
+    #   containerName: $(traininglive_ContainerName)
+    #   resources:
+    #   - deploymentName: ${{ variables.traininglive_azure_devops_vm_DeploymentName }}
+    #     environmentResourceName: $(traininglive_azure_devops_vm_EnvironmentResourceName)
+
